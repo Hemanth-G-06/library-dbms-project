@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Library | Management Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-badge">📚</div>
+      <div class="brand-text">
+        <h1>Smart Library</h1>
+        <p>DBMS Project</p>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Circulation & Discovery</div>
+      <button class="nav-item active" data-tab="catalog" onclick="switchNavTab('catalog')">
+        <span style="font-size: 1.1rem;">📖</span>
+        <span>Catalog & Search</span>
+      </button>
+      <button class="nav-item" data-tab="loans" onclick="switchNavTab('loans')">
+        <span style="font-size: 1.1rem;">📥</span>
+        <span>My Borrowed Books</span>
+      </button>
+      <button class="nav-item" data-tab="fines" onclick="switchNavTab('fines')">
+        <span style="font-size: 1.1rem;">💰</span>
+        <span>Fines & Waitlist</span>
+      </button>
+      <button class="nav-item" data-tab="rooms" onclick="switchNavTab('rooms')">
+        <span style="font-size: 1.1rem;">🏫</span>
+        <span>Study Rooms</span>
+      </button>
+      <button class="nav-item" data-tab="requests" onclick="switchNavTab('requests')">
+        <span style="font-size: 1.1rem;">🗳️</span>
+        <span>Book Requests</span>
+      </button>
+
+      <div class="nav-section-title admin-only" style="display: none;">Administration (Librarian)</div>
+      <button class="nav-item admin-only" data-tab="admin" style="display: none;" onclick="switchNavTab('admin')">
+        <span style="font-size: 1.1rem;">🛡️</span>
+        <span>Admin & Triggers Desk</span>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-profile-badge">
+        <div class="user-avatar" id="profile-avatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="profile-name">User Name</div>
+          <div style="font-size: 0.72rem; color: #94a3b8; font-family: monospace;" id="profile-card">LIB-STU-000</div>
+          <span class="user-role-badge role-member" id="profile-role">MEMBER</span>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">
+        <span>🚪</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Viewport Wrapper -->
+  <div class="main-wrapper">
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+      <div style="display: flex; align-items: center;">
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+        <div class="topbar-title">
+          <h2 id="viewport-title">Library Catalog & Discovery</h2>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+      </div>
+    </header>
+
+    <!-- Dynamic Viewport Area -->
+    <main class="content-viewport">
+
+      <!-- ================================================================== -->
+      <!-- TAB 1: CATALOG & SEARCH                                            -->
+      <!-- ================================================================== -->
+      <section id="tab-catalog" class="tab-content active">
+        <div class="catalog-controls">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              id="dash-catalog-search" 
+              class="search-input" 
+              placeholder="Search catalog titles, authors, topics, or ISBN..."
+              oninput="handleDashSearch()"
+            >
+          </div>
+          <div class="filter-bar">
+            <div class="filter-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="dash-avail-toggle" onchange="loadDashboardCatalog()">
+                <span>Available Copies Only</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="books-grid" id="dash-books-grid">
+          <!-- Dynamic books rendered here -->
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 2: MY BORROWED BOOKS (WITH 1-CLICK RETURN TRIGGER DEMO)         -->
+      <!-- ================================================================== -->
+      <section id="tab-loans" class="tab-content">
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div>
+              <h3>My Borrowed Books & Active Circulation</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Demonstrates dynamic overdue countdown badges and 1-click book return to test DB triggers.
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadMyLoans()">🔄 Refresh Loans</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Book Title</th>
+                  <th>Barcode</th>
+                  <th>Shelf Location</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="my-loans-table-body">
+                <!-- Dynamic loans rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 3: FINES & WAITLIST QUEUE                                      -->
+      <!-- ================================================================== -->
+      <section id="tab-fines" class="tab-content">
+        <!-- Fines Table -->
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div>
+              <h3>My Overdue Fines ($1.00 / Overdue Day)</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Fines are automatically inserted by DB Trigger 2 (<code>trg_loan_fine_calculation</code>) when a book is returned late.
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadMyFines()">🔄 Refresh Fines</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Book Title</th>
+                  <th>Fine Amount</th>
+                  <th>Days Overdue</th>
+                  <th>Payment Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="my-fines-table-body">
+                <!-- Dynamic fines rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Waitlist Queue -->
+        <div class="table-card" style="margin-top: 28px;">
+          <div class="table-header-bar">
+            <div>
+              <h3>My FIFO Waitlist Queue & Pickup Notifications</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Demonstrates FIFO queueing: when a book is returned, Trigger 1 reserves the copy and updates waitlist to 'notified'.
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadMyWaitlists()">🔄 Refresh Queue</button>
+          </div>
+          <div style="padding: 20px;" id="my-waitlist-container">
+            <!-- Dynamic waitlist entries rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 4: STUDY ROOMS (CONFLICT-FREE SLOT ENGINE)                     -->
+      <!-- ================================================================== -->
+      <section id="tab-rooms" class="tab-content">
+        <div class="table-card" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3>Interactive Study Room Booking</h3>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+                Relational interval conflict prevention: <code>start_time &lt; new_end AND end_time &gt; new_start</code> guarantees zero double-bookings.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label for="room-booking-date" style="font-size: 0.85rem; font-weight: 600;">Select Date:</label>
+              <input type="date" id="room-booking-date" class="form-control" style="padding: 6px 12px;" onchange="loadStudyRoomsSection()">
+            </div>
+          </div>
+
+          <div class="rooms-grid" id="study-rooms-container">
+            <!-- Dynamic rooms and slot buttons rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 5: BOOK ACQUISITION REQUESTS (UPVOTE BOARD)                    -->
+      <!-- ================================================================== -->
+      <section id="tab-requests" class="tab-content">
+        <div class="table-card" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div>
+              <h3>Crowdsourced Book Acquisition Board</h3>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+                Students upvote prospective book acquisitions. 1 vote per member is strictly enforced via a composite primary key.
+              </p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openCreateRequestModal()">
+              + Suggest a New Book
+            </button>
+          </div>
+
+          <div class="requests-container" id="book-requests-container">
+            <!-- Dynamic requests rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 6: ADMIN & TRIGGERS DESK (LIBRARIAN ONLY)                      -->
+      <!-- ================================================================== -->
+      <section id="tab-admin" class="tab-content">
+        <!-- Top Institutional KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon blue">📚</div>
+            <div class="kpi-info">
+              <h3>Distinct Titles</h3>
+              <div class="kpi-value" id="kpi-books">0</div>
+              <div class="kpi-subtext">Cataloged in 3NF books</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon purple">🏷️</div>
+            <div class="kpi-info">
+              <h3>Physical Copies</h3>
+              <div class="kpi-value" id="kpi-copies">0</div>
+              <div class="kpi-subtext">Tracked by barcodes</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon green">📖</div>
+            <div class="kpi-info">
+              <h3>Active Loans</h3>
+              <div class="kpi-value" id="kpi-active-loans">0</div>
+              <div class="kpi-subtext">Currently checked out</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon red">⚠</div>
+            <div class="kpi-info">
+              <h3>Overdue Loans</h3>
+              <div class="kpi-value" id="kpi-overdue-loans">0</div>
+              <div class="kpi-subtext">Past due date threshold</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon amber">💵</div>
+            <div class="kpi-info">
+              <h3>Unpaid Fines</h3>
+              <div class="kpi-value" id="kpi-unpaid-fines">$0.00</div>
+              <div class="kpi-subtext">Accrued across members</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon blue">👥</div>
+            <div class="kpi-info">
+              <h3>Students</h3>
+              <div class="kpi-value" id="kpi-students">0</div>
+              <div class="kpi-subtext">Active cardholders</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Issue & Return Desk Operations (ACID Transactions) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 28px;">
+          <!-- Quick Issue Form -->
+          <div class="table-card" style="padding: 22px;">
+            <h3 style="margin-bottom: 6px;">⚡ Quick Issue Desk (ACID Checkout)</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">
+              Executes row-locking transaction (<code>FOR UPDATE</code>) to prevent race conditions on the last available copy.
+            </p>
+            <form onsubmit="handleIssueBook(event)">
+              <div class="form-group">
+                <label for="issue-card-no">Student Library Card #</label>
+                <input type="text" id="issue-card-no" class="form-control" placeholder="e.g. LIB-STU-101" required>
+              </div>
+              <div class="form-group">
+                <label for="issue-barcode">Physical Copy Barcode</label>
+                <input type="text" id="issue-barcode" class="form-control" placeholder="e.g. BC-1001" required>
+              </div>
+              <div class="form-group">
+                <label for="issue-days">Loan Duration (Days)</label>
+                <input type="number" id="issue-days" class="form-control" value="14" min="1" max="90" required>
+              </div>
+              <button type="submit" id="btn-issue-submit" class="btn btn-gold" style="width: 100%;">
+                Execute Issue Transaction
+              </button>
+            </form>
+          </div>
+
+          <!-- Quick Return Scan -->
+          <div class="table-card" style="padding: 22px;">
+            <h3 style="margin-bottom: 6px;">↩ Desk Returns Scanner</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">
+              Returns copy and triggers DB FIFO Waitlist update (Trigger 1) and fine calculation (Trigger 2).
+            </p>
+            <form onsubmit="handleReturnByBarcode(event)">
+              <div class="form-group">
+                <label for="return-barcode-input">Copy Barcode</label>
+                <input type="text" id="return-barcode-input" class="form-control" placeholder="e.g. BC-1002" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 14px;">
+                Process Book Return
+              </button>
+            </form>
+            
+            <div style="margin-top: 24px; padding: 14px; background-color: var(--bg-body); border-radius: var(--radius-md); font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
+              💡 <strong>DBMS Trigger Behavior:</strong> If return date &gt; due date, Trigger 2 inserts an overdue fine ($1.00/day). If patrons are waiting on the FIFO waitlist, Trigger 1 marks the copy 'reserved' and notifies the oldest waiting student.
+            </div>
+          </div>
+        </div>
+
+        <!-- All Circulation Loans -->
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div>
+              <h3>Institutional Active Loans & Circulation</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Real-time circulation across all campus patrons.
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadAllCirculationLoans()">🔄 Refresh</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Patron</th>
+                  <th>Book Title</th>
+                  <th>Barcode</th>
+                  <th>Shelf Location</th>
+                  <th>Issued</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="admin-loans-table-body">
+                <!-- Dynamic loans rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Fines Waiving Desk (Demonstrating DB Trigger 3A) -->
+        <div class="table-card" style="margin-top: 28px;">
+          <div class="table-header-bar">
+            <div>
+              <h3>Fines Waiving Desk (Fires Trigger 3A Audit Log)</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Waiving an unpaid fine automatically triggers <code>trg_fine_waived_audit</code> to record an immutable entry into <code>audit_logs</code>.
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadAdminFinesTable()">🔄 Refresh</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Patron</th>
+                  <th>Book Title</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Due Date</th>
+                  <th>Administrative Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-fines-table-body">
+                <!-- Dynamic fines rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Inventory Management: Add Book & Copy -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-top: 28px;">
+          <!-- Add Book Form -->
+          <div class="table-card" style="padding: 22px;">
+            <h3 style="margin-bottom: 12px;">+ Catalog New Book Title</h3>
+            <form id="form-add-book" onsubmit="handleAddNewBook(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="new-book-isbn">ISBN</label>
+                  <input type="text" id="new-book-isbn" class="form-control" placeholder="978-0134494166" required>
+                </div>
+                <div class="form-group">
+                  <label for="new-book-title">Title</label>
+                  <input type="text" id="new-book-title" class="form-control" placeholder="Clean Architecture" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="new-book-subtitle">Subtitle</label>
+                <input type="text" id="new-book-subtitle" class="form-control" placeholder="A Craftsman's Guide">
+              </div>
+              <div class="form-group">
+                <label for="new-book-authors">Authors (comma separated)</label>
+                <input type="text" id="new-book-authors" class="form-control" placeholder="Robert C. Martin" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="new-book-category">Category</label>
+                  <select id="new-book-category" class="form-control" required>
+                    <option value="">Select Category...</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="new-book-publisher">Publisher</label>
+                  <input type="text" id="new-book-publisher" class="form-control" placeholder="Prentice Hall">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="new-book-year">Publication Year</label>
+                  <input type="number" id="new-book-year" class="form-control" placeholder="2018" value="2022">
+                </div>
+                <div class="form-group">
+                  <label for="new-book-edition">Edition</label>
+                  <input type="text" id="new-book-edition" class="form-control" placeholder="1st Edition" value="1st Edition">
+                </div>
+                <div class="form-group">
+                  <label for="new-book-pages">Pages</label>
+                  <input type="number" id="new-book-pages" class="form-control" placeholder="432">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="new-book-description">Description</label>
+                <textarea id="new-book-description" class="form-control" rows="2" placeholder="Overview of the book..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="new-book-cover">Cover Image URL</label>
+                <input type="url" id="new-book-cover" class="form-control" placeholder="https://...">
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Catalog Book Title
+              </button>
+            </form>
+          </div>
+
+          <!-- Add Physical Copy Form -->
+          <div class="table-card" style="padding: 22px;">
+            <h3 style="margin-bottom: 12px;">🏷️ Register Physical Copy</h3>
+            <form id="form-add-copy" onsubmit="handleAddPhysicalCopy(event)">
+              <div class="form-group">
+                <label for="copy-book-id">Catalog Book ID</label>
+                <input type="number" id="copy-book-id" class="form-control" placeholder="e.g. 1" min="1" required>
+              </div>
+              <div class="form-group">
+                <label for="copy-barcode">Unique Barcode</label>
+                <input type="text" id="copy-barcode" class="form-control" placeholder="e.g. BC-2045" required>
+              </div>
+              <div class="form-group">
+                <label for="copy-shelf">Shelf Location</label>
+                <input type="text" id="copy-shelf" class="form-control" placeholder="e.g. Aisle 3, Shelf B-2" required>
+              </div>
+              <div class="form-group">
+                <label for="copy-condition">Condition</label>
+                <select id="copy-condition" class="form-control" required>
+                  <option value="new">New</option>
+                  <option value="good" selected>Good</option>
+                  <option value="damaged">Damaged</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success" style="width: 100%;">
+                Add Copy to Inventory
+              </button>
+            </form>
+
+            <h4 style="margin-top: 24px; margin-bottom: 8px;">Book Request Approvals</h4>
+            <div id="admin-requests-container" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic requests with approve button -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- TAMPER-PROOF DATABASE TRIGGER AUDIT LOG VIEWER                   -->
+        <!-- ================================================================ -->
+        <div class="table-card" style="margin-top: 28px;">
+          <div class="table-header-bar">
+            <div>
+              <h3>Tamper-Proof Audit Log Viewer (DB Triggers)</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Displays immutable log records automatically inserted into <code>audit_logs</code> by database triggers on fine waiving and deletions.
+              </p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <select id="audit-filter-table" class="sort-select" onchange="loadAuditLogsViewer()">
+                <option value="">All Tables</option>
+                <option value="fines">fines</option>
+                <option value="books">books</option>
+                <option value="book_copies">book_copies</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" onclick="loadAuditLogsViewer()">🔄 Refresh</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Log #</th>
+                  <th>Timestamp</th>
+                  <th>Action Triggered</th>
+                  <th>Target Table (Record ID)</th>
+                  <th>Actor / Card</th>
+                  <th>Old Value (JSON)</th>
+                  <th>New Value (JSON)</th>
+                </tr>
+              </thead>
+              <tbody id="audit-logs-table-body">
+                <!-- Dynamic audit logs rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Modal: Suggest Book Acquisition -->
+<div class="modal-overlay" id="modal-request-book">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Suggest a Book for Acquisition</h3>
+      <button class="btn-close-modal" onclick="closeCreateRequestModal()">✕</button>
+    </div>
+    <form onsubmit="submitBookRequest(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="req-title">Book Title</label>
+          <input type="text" id="req-title" class="form-control" placeholder="e.g. Designing Data-Intensive Applications" required>
+        </div>
+        <div class="form-group">
+          <label for="req-author">Author(s)</label>
+          <input type="text" id="req-author" class="form-control" placeholder="e.g. Martin Kleppmann" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="req-isbn">ISBN (Optional)</label>
+            <input type="text" id="req-isbn" class="form-control" placeholder="978-1449373320">
+          </div>
+          <div class="form-group">
+            <label for="req-price">Estimated Price ($)</label>
+            <input type="number" step="0.01" id="req-price" class="form-control" placeholder="45.00">
+          </div>
+        </div>
+        <div style="font-size: 0.78rem; color: var(--text-muted);">
+          Your suggestion will be published to the acquisition board for student community upvoting.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeCreateRequestModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit for Voting</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Catalog Book Details & Recommendations -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal-content modal-lg">
+    <div class="modal-header">
+      <h3 id="modal-book-title">Book Overview</h3>
+      <button class="btn-close-modal" onclick="closeBookModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-book-body">
+      <!-- Injected via openBookModal() in app.js -->
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  // Book Details Modal helpers on dashboard
+  async function openBookModal(bookId) {
+    const modal = document.getElementById("book-modal");
+    const titleElem = document.getElementById("modal-book-title");
+    const bodyElem = document.getElementById("modal-book-body");
+
+    modal.classList.add("active");
+    bodyElem.innerHTML = `<div style="text-align: center; padding: 40px;">Loading book details...</div>`;
+
+    try {
+      const book = await apiFetch(`/api/books/${bookId}`);
+      titleElem.innerText = book.title;
+
+      const isAvail = book.available_copies > 0;
+      const copiesRows = book.copies.map(c => {
+        let badgeClass = "badge-active";
+        if (c.status === "available") badgeClass = "badge-returned";
+        else if (c.status === "reserved") badgeClass = "badge-waiting";
+        else if (c.status === "issued") badgeClass = "badge-unpaid";
+
+        return `
+          <tr>
+            <td><code>${c.barcode}</code></td>
+            <td><strong>${c.shelf_location}</strong></td>
+            <td><span style="text-transform: capitalize;">${c.condition}</span></td>
+            <td><span class="status-badge ${badgeClass}">${c.status}</span></td>
+          </tr>
+        `;
+      }).join("");
+
+      // Recommendations Strip
+      let recsHtml = "";
+      if (book.recommendations && book.recommendations.length > 0) {
+        recsHtml = `
+          <div class="recommendations-strip">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+              💡 Students Who Borrowed This Also Borrowed (SQL Self-Join)
+            </h4>
+            <div class="rec-grid">
+              ${book.recommendations.map(r => `
+                <div class="rec-card" onclick="openBookModal(${r.book_id})">
+                  <img src="${r.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80'}" class="rec-cover">
+                  <div class="rec-title">${r.title}</div>
+                  ${r.co_borrow_count > 0 ? `<div style="font-size: 0.68rem; color: var(--primary); font-weight: 600; margin-top: 4px;">${r.co_borrow_count} student co-loans</div>` : ''}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      // Actions
+      let actionBtn = "";
+      if (isAvail) {
+        actionBtn = `
+          <div style="padding: 12px; background: var(--success-bg); border: 1px solid var(--success-border); border-radius: var(--radius-md); color: var(--success); font-weight: 600; font-size: 0.88rem;">
+            ✓ Copies are in stock on shelves. Present your card (<code>${currentUser.library_card_no}</code>) at the Issue Desk to borrow!
+          </div>
+        `;
+      } else {
+        actionBtn = `
+          <button class="btn btn-gold" style="width: 100%;" onclick="joinWaitlist(${book.book_id})">
+            ⏳ Join FIFO Waitlist (${book.waitlist_count} Patrons in Queue)
+          </button>
+        `;
+      }
+
+      bodyElem.innerHTML = `
+        <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px;">
+          <img src="${book.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80'}" style="width: 140px; height: 195px; object-fit: cover; border-radius: var(--radius-md); box-shadow: var(--shadow-md);">
+          <div style="flex: 1; min-width: 250px;">
+            <h4 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">${book.title}</h4>
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">By <strong>${book.authors}</strong></div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+              <span class="amenity-chip">📚 ${book.category_name}</span>
+              <span class="amenity-chip">🏢 ${book.publisher_name || 'Publisher'}</span>
+              <span class="amenity-chip">📅 ${book.publication_year || 'N/A'}</span>
+              <span class="amenity-chip">📄 ${book.pages ? book.pages + ' pages' : 'Standard'}</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.5; margin-bottom: 16px;">
+              ${book.description || 'No detailed overview available for this title.'}
+            </p>
+            ${actionBtn}
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 10px;">
+          Physical Copies & Shelf Tracking (${book.total_copies} Copies)
+        </h4>
+        <div class="table-responsive" style="margin-bottom: 16px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Barcode</th>
+                <th>Shelf Location</th>
+                <th>Condition</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${copiesRows || '<tr><td colspan="4">No physical copies registered.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+
+        ${recsHtml}
+      `;
+    } catch (err) {
+      bodyElem.innerHTML = `<div style="color: var(--danger); padding: 20px;">Failed to load book: ${err.message}</div>`;
+    }
+  }
+
+  function closeBookModal() {
+    document.getElementById("book-modal").classList.remove("active");
+  }
+
+  async function joinWaitlist(bookId) {
+    try {
+      const res = await apiFetch("/api/waitlist/join", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId })
+      });
+      showToast(res.message, "success");
+      openBookModal(bookId);
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  }
+</script>
+</body>
+</html>
+

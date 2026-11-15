@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Library | Your Gateway to Discovery</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="public-nav">
+    <div class="brand-wrapper">
+      <div class="logo-badge">📖</div>
+      <div class="brand-text">
+        <h2>Smart Library</h2>
+        <span>Academic DBMS Catalog</span>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <a href="#catalog-section" class="nav-link">Catalog</a>
+      <a href="#featured-section" class="nav-link">Featured Titles</a>
+      <a href="dashboard.html?tab=rooms" class="nav-link">Study Rooms</a>
+      <a href="dashboard.html?tab=requests" class="nav-link">Book Requests</a>
+    </nav>
+
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+      <div id="auth-nav-slot">
+        <a href="login.html" class="btn btn-gold btn-sm">Sign In / Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stunning Hero Section -->
+  <section class="hero-section">
+    <div class="hero-pill-badge">
+      <span>🏛️ University Knowledge Repository & DBMS Portal</span>
+    </div>
+    <h1 class="hero-title">
+      Your Gateway to <span>Discovery</span> & Knowledge
+    </h1>
+    <p class="hero-subtitle">
+      Explore foundational academic literature, inspect real-time physical shelf locations, and experience ACID checkout transactions with automated FIFO queueing.
+    </p>
+
+    <!-- Prominent Centered Search Bar -->
+    <div class="hero-search-container">
+      <div class="hero-search-bar">
+        <span class="search-icon-hero">🔍</span>
+        <input 
+          type="text" 
+          id="hero-search-input" 
+          class="hero-search-input" 
+          placeholder="Search books by title, author, topic, or ISBN..."
+          onkeypress="if(event.key === 'Enter') executeHeroSearch()"
+        >
+        <button class="btn-hero-search" onclick="executeHeroSearch()">
+          Search Catalog
+        </button>
+      </div>
+
+      <div class="quick-tags">
+        <span>Popular Subjects:</span>
+        <button class="quick-tag-chip" onclick="quickSearchTopic('Database')">Database Systems</button>
+        <button class="quick-tag-chip" onclick="quickSearchTopic('Algorithms')">Algorithms</button>
+        <button class="quick-tag-chip" onclick="quickSearchTopic('Clean Code')">Software Engineering</button>
+        <button class="quick-tag-chip" onclick="quickSearchTopic('Operating System')">Operating Systems</button>
+        <button class="quick-tag-chip" onclick="quickSearchTopic('Deep Learning')">Artificial Intelligence</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions Section -->
+  <section class="quick-actions-section">
+    <div class="quick-actions-grid">
+      <div class="action-card" onclick="scrollToCatalog()">
+        <div class="action-icon-box">📚</div>
+        <div class="action-info">
+          <h4>Explore Catalog</h4>
+          <p>Search 16 classic engineering and computing titles across physical shelves.</p>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="navigateTo('dashboard.html?tab=loans')">
+        <div class="action-icon-box">⏱️</div>
+        <div class="action-info">
+          <h4>My Active Loans</h4>
+          <p>Inspect return due dates, countdown alerts, and 1-click return testing.</p>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="navigateTo('dashboard.html?tab=rooms')">
+        <div class="action-icon-box">🏛️</div>
+        <div class="action-info">
+          <h4>Study Room Pods</h4>
+          <p>Reserve soundproof collaborative rooms with conflict-free slot booking.</p>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="navigateTo('dashboard.html?tab=requests')">
+        <div class="action-icon-box">🗳️</div>
+        <div class="action-info">
+          <h4>Request a Book</h4>
+          <p>Submit title acquisitions and upvote library community recommendations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curated Featured Books Strip -->
+  <section class="featured-section" id="featured-section">
+    <div class="section-header-box">
+      <div>
+        <h2>Featured Academic Cornerstones</h2>
+        <p>Curated core textbooks recommended for computer science, distributed computing, and data systems.</p>
+      </div>
+      <a href="#catalog-section" class="btn btn-secondary btn-sm" onclick="scrollToCatalog()">View Entire Catalog →</a>
+    </div>
+
+    <div class="featured-grid">
+      <!-- Featured Book 1 -->
+      <div class="featured-book-card" onclick="openBookModal(1)">
+        <div class="featured-ribbon">⭐ Core DBMS Curriculum</div>
+        <div class="book-cover-container">
+          <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80" class="book-cover-img" alt="Database System Concepts">
+          <span class="badge-category">Database Systems</span>
+        </div>
+        <div class="book-content">
+          <h3 class="book-title">Database System Concepts (7th Edition)</h3>
+          <div class="book-authors">By Abraham Silberschatz, Henry F. Korth, S. Sudarshan</div>
+          <p class="book-desc">The authoritative reference on relational algebra, SQL transactions, concurrency control, and distributed DBMS.</p>
+          <div class="book-footer">
+            <span class="book-isbn">Aisle 1, Shelf A</span>
+            <button class="btn-view-details">Inspect Copies →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Book 2 -->
+      <div class="featured-book-card" onclick="openBookModal(2)">
+        <div class="featured-ribbon">🔥 Highest Demand</div>
+        <div class="book-cover-container">
+          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80" class="book-cover-img" alt="Designing Data-Intensive Applications">
+          <span class="badge-category">Distributed Systems</span>
+        </div>
+        <div class="book-content">
+          <h3 class="book-title">Designing Data-Intensive Applications</h3>
+          <div class="book-authors">By Martin Kleppmann</div>
+          <p class="book-desc">Explores storage engines, replication, partitioning, transactions, and stream processing in modern distributed systems.</p>
+          <div class="book-footer">
+            <span class="book-isbn">Aisle 1, Shelf B</span>
+            <button class="btn-view-details">Inspect Copies →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Book 3 -->
+      <div class="featured-book-card" onclick="openBookModal(3)">
+        <div class="featured-ribbon">🏆 Algorithmic Bible</div>
+        <div class="book-cover-container">
+          <img src="https://images.unsplash.com/photo-1532012164546-f432f2e3777a?w=400&q=80" class="book-cover-img" alt="Introduction to Algorithms">
+          <span class="badge-category">Algorithms & Data Structures</span>
+        </div>
+        <div class="book-content">
+          <h3 class="book-title">Introduction to Algorithms (CLRS 4th Ed.)</h3>
+          <div class="book-authors">By Cormen, Leiserson, Rivest, Stein</div>
+          <p class="book-desc">Comprehensive coverage of divide-and-conquer, dynamic programming, graph algorithms, and NP-completeness.</p>
+          <div class="book-footer">
+            <span class="book-isbn">Aisle 2, Shelf A</span>
+            <button class="btn-view-details">Inspect Copies →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Catalog Section -->
+  <main class="catalog-wrapper" id="catalog-section">
+    <div class="section-header-box" style="margin-bottom: 18px;">
+      <div>
+        <h2>Complete Catalog & Live Shelf Tracking</h2>
+        <p>Live inventory powered by SQL View <code>v_catalog_availability</code>.</p>
+      </div>
+      <div style="font-size: 0.9rem; color: var(--text-muted);" id="books-count-label">
+        Loading catalog...
+      </div>
+    </div>
+
+    <div class="catalog-controls">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="catalog-search" 
+          class="search-input" 
+          placeholder="Filter catalog by book title, author, topic, or ISBN..."
+          oninput="handleSearch(this.value)"
+        >
+      </div>
+
+      <div class="filter-bar">
+        <div class="category-pills" id="category-pills">
+          <button class="category-pill active" onclick="filterCategory(null, this)">All Subjects</button>
+          <!-- Dynamic category pills injected here -->
+        </div>
+
+        <div class="filter-toggles">
+          <label class="toggle-label">
+            <input type="checkbox" id="avail-toggle" onchange="toggleAvailableOnly(this.checked)">
+            <span>Available Only</span>
+          </label>
+          <select id="sort-select" class="sort-select" onchange="changeSort(this.value)">
+            <option value="title">Sort: Title (A-Z)</option>
+            <option value="available">Sort: Most Copies Available</option>
+            <option value="year_desc">Sort: Newest Edition</option>
+            <option value="year_asc">Sort: Oldest</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Books Grid Container -->
+    <div class="books-grid" id="books-grid">
+      <!-- Dynamic book cards rendered here -->
+    </div>
+  </main>
+
+  <!-- Book Details & Physical Copies Modal -->
+  <div class="modal-overlay" id="book-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 id="modal-book-title">Book Overview & Shelf Inventory</h3>
+        <button class="btn-close-modal" onclick="closeBookModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-book-body">
+        <!-- Rendered dynamically via openBookModal(bookId) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Sophisticated Forest Green & Gold Public Footer -->
+  <footer class="public-footer">
+    <div class="footer-content">
+      <div class="footer-column">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <div class="logo-badge" style="width: 36px; height: 36px; font-size: 1.1rem;">📖</div>
+          <span style="font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; color: #ffffff;">Smart Library</span>
+        </div>
+        <p>
+          A state-of-the-art institutional catalog engine demonstrating 3NF relational normalization, ACID checkout transactions, and autonomous database triggers.
+        </p>
+      </div>
+
+      <div class="footer-column">
+        <h4>Library Hours</h4>
+        <ul>
+          <li>Monday – Friday: 08:00 AM – 10:00 PM</li>
+          <li>Saturday: 09:00 AM – 08:00 PM</li>
+          <li>Sunday: 10:00 AM – 06:00 PM</li>
+          <li>24/7 Digital Catalog Access</li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4>DBMS Architectural Features</h4>
+        <ul>
+          <li>Row-Locked ACID Checkouts</li>
+          <li>FIFO Queue Triggers on Return</li>
+          <li>Automated Overdue Fine Generation</li>
+          <li>Immutable Trigger Audit Logs</li>
+          <li>Self-Join Co-Borrow Recommendations</li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4>Portal Access</h4>
+        <ul>
+          <li><a href="login.html" style="color: var(--accent-gold);">Patron & Librarian Sign In</a></li>
+          <li><a href="dashboard.html?tab=rooms" style="color: #cbd5e1;">Study Room Booking</a></li>
+          <li><a href="dashboard.html?tab=requests" style="color: #cbd5e1;">Acquisition Voting Board</a></li>
+          <li><a href="http://127.0.0.1:8000/docs" target="_blank" style="color: #cbd5e1;">Interactive OpenAPI Docs</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Smart Library Management System. DBMS College Project.</div>
+      <div>Designed with Deep Forest Green, Soft Cream & Warm Gold.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    let currentCategoryId = null;
+    let availableOnly = false;
+    let currentSort = "title";
+    let searchDebounceTimer = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const authSlot = document.getElementById("auth-nav-slot");
+      if (Auth.isAuthenticated()) {
+        const user = Auth.getUser();
+        authSlot.innerHTML = `
+          <a href="dashboard.html" class="btn btn-gold btn-sm">
+            ${user.role === 'admin' ? '🛡️ Admin Desk' : '📖 My Dashboard'}
+          </a>
+        `;
+      }
+      loadCategories();
+      loadBooks();
+    });
+
+    async function loadCategories() {
+      try {
+        const categories = await apiFetch("/api/books/categories");
+        const container = document.getElementById("category-pills");
+        categories.forEach(cat => {
+          const pill = document.createElement("button");
+          pill.className = "category-pill";
+          pill.innerText = `${cat.category_name} (${cat.book_count})`;
+          pill.onclick = () => filterCategory(cat.category_id, pill);
+          container.appendChild(pill);
+        });
+      } catch (err) {
+        console.error("Failed to load categories:", err);
+      }
+    }
+
+    async function loadBooks() {
+      const grid = document.getElementById("books-grid");
+      const countLabel = document.getElementById("books-count-label");
+      
+      let endpoint = `/api/books?sort_by=${currentSort}`;
+      if (currentCategoryId) endpoint += `&category_id=${currentCategoryId}`;
+      if (availableOnly) endpoint += `&available_only=true`;
+      
+      const searchVal = document.getElementById("catalog-search").value.trim();
+      if (searchVal) endpoint += `&search=${encodeURIComponent(searchVal)}`;
+
+      try {
+        const books = await apiFetch(endpoint);
+        countLabel.innerHTML = `Showing <strong>${books.length}</strong> catalog titles`;
+
+        if (books.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background-color: var(--bg-surface); border: 1px dashed var(--border); border-radius: var(--radius-lg);">
+              <div style="font-size: 2.8rem; margin-bottom: 12px; color: var(--accent-gold);">🔍</div>
+              <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 6px; font-family: var(--font-serif);">No catalog titles found</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">Try adjusting your search keywords or subject filter.</p>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = books.map(book => {
+          const isAvail = book.available_copies > 0;
+          const availBadge = isAvail 
+            ? `<span class="badge-availability badge-available">✓ ${book.available_copies} of ${book.total_copies} Available</span>`
+            : `<span class="badge-availability badge-unavailable">✕ 0 of ${book.total_copies} Available</span>`;
+
+          const coverUrl = book.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80';
+
+          return `
+            <div class="book-card" onclick="openBookModal(${book.book_id})">
+              <div class="book-cover-container">
+                <img src="${coverUrl}" alt="${book.title}" class="book-cover-img" loading="lazy">
+                ${availBadge}
+                <span class="badge-category">${book.category_name}</span>
+              </div>
+              <div class="book-content">
+                <h3 class="book-title" title="${book.title}">${book.title}</h3>
+                <div class="book-authors">By ${book.authors}</div>
+                <p class="book-desc">${book.description || 'No description provided.'}</p>
+                <div class="book-footer">
+                  <span class="book-isbn">ISBN: ${book.isbn}</span>
+                  <button class="btn-view-details" onclick="event.stopPropagation(); openBookModal(${book.book_id})">
+                    View Copies →
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      } catch (err) {
+        showToast("Error loading catalog books", "error");
+      }
+    }
+
+    function handleSearch(val) {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        loadBooks();
+      }, 300);
+    }
+
+    function executeHeroSearch() {
+      const heroQuery = document.getElementById("hero-search-input").value.trim();
+      document.getElementById("catalog-search").value = heroQuery;
+      scrollToCatalog();
+      loadBooks();
+    }
+
+    function quickSearchTopic(topic) {
+      document.getElementById("hero-search-input").value = topic;
+      document.getElementById("catalog-search").value = topic;
+      scrollToCatalog();
+      loadBooks();
+    }
+
+    function scrollToCatalog() {
+      const el = document.getElementById("catalog-section");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function navigateTo(url) {
+      window.location.href = url;
+    }
+
+    function filterCategory(catId, btn) {
+      currentCategoryId = catId;
+      document.querySelectorAll(".category-pill").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      loadBooks();
+    }
+
+    function toggleAvailableOnly(checked) {
+      availableOnly = checked;
+      loadBooks();
+    }
+
+    function changeSort(val) {
+      currentSort = val;
+      loadBooks();
+    }
+
+    async function openBookModal(bookId) {
+      const modal = document.getElementById("book-modal");
+      const titleElem = document.getElementById("modal-book-title");
+      const bodyElem = document.getElementById("modal-book-body");
+
+      modal.classList.add("active");
+      bodyElem.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);">Loading book details...</div>`;
+
+      try {
+        const book = await apiFetch(`/api/books/${bookId}`);
+        titleElem.innerText = book.title;
+
+        const isAvail = book.available_copies > 0;
+        const copiesRows = book.copies.map(c => {
+          let badgeClass = "badge-active";
+          if (c.status === "available") badgeClass = "badge-returned";
+          else if (c.status === "reserved") badgeClass = "badge-waiting";
+          else if (c.status === "issued") badgeClass = "badge-unpaid";
+
+          return `
+            <tr>
+              <td><code>${c.barcode}</code></td>
+              <td><strong>${c.shelf_location}</strong></td>
+              <td><span style="text-transform: capitalize;">${c.condition}</span></td>
+              <td><span class="status-badge ${badgeClass}">${c.status}</span></td>
+            </tr>
+          `;
+        }).join("");
+
+        // Build recommendations
+        let recsHtml = "";
+        if (book.recommendations && book.recommendations.length > 0) {
+          recsHtml = `
+            <div class="recommendations-strip">
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; font-family: var(--font-serif);">
+                💡 Students Who Borrowed This Also Borrowed (SQL Self-Join)
+              </h4>
+              <div class="rec-grid">
+                ${book.recommendations.map(r => `
+                  <div class="rec-card" onclick="openBookModal(${r.book_id})">
+                    <img src="${r.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80'}" class="rec-cover">
+                    <div class="rec-title">${r.title}</div>
+                    ${r.co_borrow_count > 0 ? `<div style="font-size: 0.68rem; color: var(--accent-gold); font-weight: 700; margin-top: 4px;">${r.co_borrow_count} student co-loans</div>` : ''}
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        // Action Buttons
+        let actionBtn = "";
+        if (!Auth.isAuthenticated()) {
+          actionBtn = `<a href="login.html" class="btn btn-gold" style="width: 100%;">Sign In to Borrow or Reserve This Book</a>`;
+        } else if (isAvail) {
+          actionBtn = `
+            <button class="btn btn-primary" style="width: 100%;" onclick="requestBorrow(${book.book_id})">
+              ✓ Available on Shelf (Present Library Card at Issue Desk)
+            </button>
+          `;
+        } else {
+          actionBtn = `
+            <button class="btn btn-gold" style="width: 100%;" onclick="joinWaitlist(${book.book_id})">
+              ⏳ Join FIFO Waitlist (${book.waitlist_count} Patrons in Queue)
+            </button>
+          `;
+        }
+
+        bodyElem.innerHTML = `
+          <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px;">
+            <img src="${book.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80'}" style="width: 140px; height: 195px; object-fit: cover; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-gold);">
+            <div style="flex: 1; min-width: 250px;">
+              <h4 style="font-size: 1.25rem; font-family: var(--font-serif); font-weight: 700; color: var(--primary); margin-bottom: 4px;">${book.title}</h4>
+              <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">By <strong>${book.authors}</strong></div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+                <span class="amenity-chip">📚 ${book.category_name}</span>
+                <span class="amenity-chip">🏢 ${book.publisher_name || 'Publisher'}</span>
+                <span class="amenity-chip">📅 ${book.publication_year || 'N/A'}</span>
+                <span class="amenity-chip">📄 ${book.pages ? book.pages + ' pages' : 'Standard'}</span>
+              </div>
+              <p style="font-size: 0.86rem; color: var(--text-main); line-height: 1.6; margin-bottom: 18px;">
+                ${book.description || 'No detailed overview available for this title.'}
+              </p>
+              ${actionBtn}
+            </div>
+          </div>
+
+          <h4 style="font-size: 1rem; font-family: var(--font-serif); font-weight: 700; margin-bottom: 10px; color: var(--primary);">
+            Physical Copy Inventory & Shelf Locations (${book.total_copies} Copies Tracked)
+          </h4>
+          <div class="table-responsive" style="margin-bottom: 16px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Barcode</th>
+                  <th>Shelf Location</th>
+                  <th>Condition</th>
+                  <th>Inventory Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${copiesRows || '<tr><td colspan="4">No physical copies registered.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+
+          ${recsHtml}
+        `;
+      } catch (err) {
+        bodyElem.innerHTML = `<div style="color: var(--danger); padding: 20px;">Failed to load book: ${err.message}</div>`;
+      }
+    }
+
+    function closeBookModal() {
+      document.getElementById("book-modal").classList.remove("active");
+    }
+
+    async function joinWaitlist(bookId) {
+      if (!Auth.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+      try {
+        const res = await apiFetch("/api/waitlist/join", {
+          method: "POST",
+          body: JSON.stringify({ book_id: bookId })
+        });
+        showToast(res.message, "success");
+        openBookModal(bookId);
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    function requestBorrow(bookId) {
+      if (!Auth.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+      const user = Auth.getUser();
+      if (user.role === 'admin') {
+        window.location.href = `dashboard.html?tab=admin`;
+      } else {
+        showToast("Present your Library Card at the Issue Desk with the copy's barcode.", "info");
+      }
+    }
+  </script>
+</body>
+</html>

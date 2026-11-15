@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Library | Portal Authentication</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      background-color: var(--bg-body);
+    }
+
+    .auth-banner-pane {
+      flex: 1.1;
+      background: radial-gradient(circle at 85% 15%, rgba(197, 155, 39, 0.22) 0%, transparent 55%),
+        linear-gradient(135deg, #092620 0%, #0d4036 50%, #061e19 100%);
+      color: #ffffff;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      border-right: 2px solid var(--accent-gold);
+    }
+
+    .auth-banner-pane::after {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(197, 155, 39, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .banner-features {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 36px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(197, 155, 39, 0.25);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .feature-icon {
+      font-size: 1.4rem;
+      background: rgba(197, 155, 39, 0.2);
+      color: var(--accent-gold);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(197, 155, 39, 0.3);
+    }
+
+    .feature-text h4 {
+      font-size: 0.98rem;
+      font-family: var(--font-serif);
+      color: #ffffff;
+      margin-bottom: 3px;
+    }
+
+    .feature-text p {
+      font-size: 0.82rem;
+      color: #b7d1cb;
+      line-height: 1.45;
+    }
+
+    .auth-form-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 50px 70px;
+      background-color: var(--bg-surface);
+      position: relative;
+    }
+
+    .quick-fill-box {
+      background-color: var(--bg-surface-soft);
+      border: 1px dashed var(--accent-gold-border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 24px;
+    }
+
+    .quick-fill-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent-gold-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    [data-theme="dark"] .quick-fill-title {
+      color: var(--accent-gold);
+    }
+
+    .quick-fill-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab-switch {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .tab-switch button {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: color var(--transition-fast);
+    }
+
+    .tab-switch button.active {
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .tab-switch button.active {
+      color: var(--accent-gold);
+    }
+
+    .tab-switch button.active::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--accent-gold);
+    }
+
+    @media (max-width: 900px) {
+      .auth-page {
+        flex-direction: column;
+      }
+
+      .auth-banner-pane {
+        padding: 36px 20px;
+      }
+
+      .auth-form-pane {
+        padding: 36px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="auth-page">
+    <!-- Left Side: Architectural DBMS Highlights Banner -->
+    <div class="auth-banner-pane">
+      <div>
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 24px;">
+          <div class="logo-badge" style="width: 52px; height: 52px; font-size: 1.6rem;">📖</div>
+          <div>
+            <h2 style="font-size: 1.5rem; font-family: var(--font-serif); font-weight: 800; color: #ffffff;">Smart
+              Library Portal</h2>
+            <span
+              style="font-size: 0.74rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Academic
+              DBMS Project</span>
+          </div>
+        </div>
+        <p style="font-size: 0.95rem; color: #d0e4df; max-width: 480px; line-height: 1.6;">
+          An enterprise academic library circulation and catalog engine governed by 3NF relational normalization,
+          row-locked ACID checkout transactions, and database triggers.
+        </p>
+
+        <div class="banner-features">
+          <div class="feature-item">
+            <div class="feature-icon">🔒</div>
+            <div class="feature-text">
+              <h4>ACID Checkout Transactions</h4>
+              <p>Row-level locking (<code>SELECT ... FOR UPDATE</code>) eliminates race conditions on physical book
+                copies.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-text">
+              <h4>Autonomous Database Triggers</h4>
+              <p>FIFO waitlist queue notifications, overdue fine generation ($1.00/day), and tamper-proof audit trails.
+              </p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-text">
+              <h4>Normalized 3NF & SQL Views</h4>
+              <p>13 structured tables without data redundancy, coupled with aggregated inventory views & self-join
+                co-borrow recommendations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size: 0.78rem; color: #8baaa2; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 18px;">
+        FastAPI • MySQL / SQLite Core • Role-Based Access Control • Pure Vanilla JS (ES6+)
+      </div>
+    </div>
+
+    <!-- Right Side: Login & Register Forms -->
+    <div class="auth-form-pane">
+      <!-- Header with Theme Toggle -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <a href="index.html"
+          style="font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 6px; color: var(--primary);">
+          ← Return to Catalog Discovery
+        </a>
+        <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+      </div>
+
+      <!-- Quick-Fill Demo Box for Project Presentation -->
+      <div class="quick-fill-box">
+        <div class="quick-fill-title">
+          <span>⚡ 1-Click Evaluation Credentials</span>
+        </div>
+        <div class="quick-fill-buttons">
+          <button class="btn btn-secondary btn-sm" onclick="quickFill('student')">
+            👨‍🎓 Student Demo (Alex Rivera)
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="quickFill('admin')">
+            👩‍🏫 Librarian Admin (Dr. Vance)
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="tab-switch">
+        <button id="tab-login-btn" class="active" onclick="switchTab('login')">Sign In</button>
+        <button id="tab-register-btn" onclick="switchTab('register')">Create Student Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email">University Email</label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@student.edu" required
+            oninput="detectRole(this.value)">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••••••" required>
+        </div>
+
+        <div id="role-indicator"
+          style="display: none; margin-bottom: 16px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 700;">
+        </div>
+
+        <button type="submit" id="btn-submit-login" class="btn btn-gold" style="width: 100%; margin-top: 8px;">
+          Sign In to Portal
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" style="display: none;" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="e.g. Maya Lin" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-email">University Email</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="maya.lin@student.edu" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Minimum 6 characters"
+              minlength="6" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-phone">Phone Number</label>
+            <input type="tel" id="reg-phone" class="form-control" placeholder="+1-555-0199">
+          </div>
+        </div>
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px;">
+          ℹ An institutional <strong>Library Card Number</strong> (e.g. <code>LIB-STU-108</code>) is automatically
+          generated upon registration.
+        </div>
+        <button type="submit" id="btn-submit-register" class="btn btn-primary" style="width: 100%;">
+          Register & Generate Library Card
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    function switchTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+      document.getElementById('register-form').style.display = isLogin ? 'none' : 'block';
+      document.getElementById('tab-login-btn').className = isLogin ? 'active' : '';
+      document.getElementById('tab-register-btn').className = isLogin ? '' : 'active';
+    }
+
+    function quickFill(role) {
+      switchTab('login');
+      const emailInput = document.getElementById('login-email');
+      const passInput = document.getElementById('login-password');
+      if (role === 'admin') {
+        emailInput.value = 'admin@library.edu';
+        passInput.value = 'adminpassword123';
+        showToast('Loaded Librarian Admin credentials', 'info');
+      } else {
+        emailInput.value = 'alex.rivera@student.edu';
+        passInput.value = 'studentpassword123';
+        showToast('Loaded Student Member credentials', 'info');
+      }
+      detectRole(emailInput.value);
+    }
+
+    function detectRole(email) {
+      const indicator = document.getElementById('role-indicator');
+      if (email.toLowerCase().includes('admin')) {
+        indicator.style.display = 'block';
+        indicator.style.backgroundColor = 'var(--danger-bg)';
+        indicator.style.color = 'var(--danger)';
+        indicator.style.border = '1px solid var(--danger-border)';
+        indicator.innerHTML = '🛡️ Detected Role: <strong>Librarian Administrator</strong>';
+      } else if (email.length > 5) {
+        indicator.style.display = 'block';
+        indicator.style.backgroundColor = 'var(--accent-gold-light)';
+        indicator.style.color = 'var(--accent-gold-dark)';
+        indicator.style.border = '1px solid var(--accent-gold-border)';
+        indicator.innerHTML = '👨‍🎓 Detected Role: <strong>Student Patron</strong>';
+      } else {
+        indicator.style.display = 'none';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-login');
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      btn.disabled = true;
+      btn.innerText = 'Authenticating...';
+
+      try {
+        const res = await apiFetch('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password })
+        });
+
+        Auth.setToken(res.access_token);
+        Auth.setUser(res.user);
+        showToast(`Welcome back, ${res.user.full_name}!`, 'success');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 700);
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Sign In to Portal';
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-register');
+      const full_name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const phone = document.getElementById('reg-phone').value.trim();
+
+      btn.disabled = true;
+      btn.innerText = 'Registering patron...';
+
+      try {
+        const res = await apiFetch('/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ full_name, email, password, phone, role: 'member' })
+        });
+
+        Auth.setToken(res.access_token);
+        Auth.setUser(res.user);
+        showToast(`Account registered! Card: ${res.user.library_card_no}`, 'success');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Register & Generate Library Card';
+      }
+    }
+
+    if (Auth.isAuthenticated()) {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+
+</html>
